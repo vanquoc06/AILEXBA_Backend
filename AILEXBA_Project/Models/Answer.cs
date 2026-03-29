@@ -10,6 +10,6 @@ namespace AILEXBA_Project.Models
         public bool IsCorrect { get; set; } // Trả lời đúng hay sai
 
         public int QuestionId { get; set; }
-        public Question Question { get; set; } // Liên kết ngược lại Câu hỏi
+        public Question ? Question { get; set; } // Liên kết ngược lại Câu hỏi
     }
 }

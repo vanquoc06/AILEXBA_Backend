@@ -12,7 +12,7 @@ namespace AILEXBA_Project.Models
         public string Explanation { get; set; }
 
         public int SubjectId { get; set; }
-        public Subject Subject { get; set; } // Liên kết tới Môn học
+        public Subject ? Subject { get; set; } // Liên kết tới Môn học
 
         public List<Answer> Answers { get; set; } // Danh sách đáp án
     }
