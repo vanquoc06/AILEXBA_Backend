@@ -2,6 +2,7 @@
 using AILEXBA_Project.Data;
 using AILEXBA_Project.Models;
 using AILEXBA_Project.DTOs;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -18,24 +19,21 @@ namespace AILEXBA_Project.Controllers
             _context = context;
         }
 
-        // Chức năng Đăng ký (PB04)
+        // PB04: Đăng ký tài khoản
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
-            // Kiểm tra xem email đã tồn tại chưa
-            if (_context.Users.Any(u => u.Email == request.Email))
+            if (await _context.Users.AnyAsync(u => u.Email == request.Email))
             {
                 return BadRequest(new { message = "Email này đã được sử dụng." });
             }
 
-            // Tạo người dùng mới
             var user = new User
             {
                 FullName = request.FullName,
                 Email = request.Email,
-                // Mã hóa mật khẩu trước khi lưu vào Database
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
-                Role = "Student" // Mặc định người đăng ký mới là Học sinh
+                Role = "Student"
             };
 
             _context.Users.Add(user);
@@ -44,20 +42,17 @@ namespace AILEXBA_Project.Controllers
             return Ok(new { message = "Đăng ký tài khoản thành công!" });
         }
 
-        // Chức năng Đăng nhập (PB05)
+        // PB05: Đăng nhập hệ thống
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginRequest request)
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-            // Tìm người dùng theo email
-            var user = _context.Users.FirstOrDefault(u => u.Email == request.Email);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
 
-            // Kiểm tra user có tồn tại và mật khẩu có khớp với mã hash trong DB không
             if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
             {
                 return Unauthorized(new { message = "Sai tên đăng nhập hoặc mật khẩu." });
             }
 
-            // Trả về thông tin cơ bản (Ở bước sau chúng ta sẽ nâng cấp lên JWT Token)
             return Ok(new
             {
                 message = "Đăng nhập thành công!",
@@ -65,6 +60,33 @@ namespace AILEXBA_Project.Controllers
                 fullName = user.FullName,
                 role = user.Role
             });
+        }
+
+        // PB06: Đổi mật khẩu
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+
+            if (user == null)
+            {
+                return NotFound(new { message = "Tài khoản không tồn tại." });
+            }
+
+            if (!string.IsNullOrEmpty(request.OldPassword))
+            {
+                if (!BCrypt.Net.BCrypt.Verify(request.OldPassword, user.PasswordHash))
+                {
+                    return BadRequest(new { message = "Mật khẩu cũ không chính xác." });
+                }
+            }
+
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Đặt lại mật khẩu thành công!" });
         }
     }
 }

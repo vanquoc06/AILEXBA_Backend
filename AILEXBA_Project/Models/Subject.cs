@@ -6,6 +6,6 @@ namespace AILEXBA_Project.Models
     {
         [Key]
         public int Id { get; set; }
-        public string Name { get; set; } // VD: Toán, Tiếng Anh
+        public string Name { get; set; } = string.Empty;
     }
 }

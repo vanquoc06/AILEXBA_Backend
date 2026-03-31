@@ -2,7 +2,8 @@
 {
     public class ChangePasswordRequest
     {
-        public string OldPassword { get; set; }
-        public string NewPassword { get; set; }
+        public string Email { get; set; } = string.Empty;
+        public string? OldPassword { get; set; } // Có thể để trống nếu làm luồng Reset Pass qua Mail
+        public string NewPassword { get; set; } = string.Empty;
     }
 }
