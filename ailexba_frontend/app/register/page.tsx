@@ -21,71 +21,104 @@ export default function RegisterPage() {
       setSuccess('Đăng ký thành công! Đang chuyển hướng...');
       setTimeout(() => router.push('/login'), 1500);
     } catch (err: unknown) {
-      if (typeof err === 'string') {
-        setError(err);
-      } else if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError('Có lỗi xảy ra!');
-      }
+      if (typeof err === 'string') setError(err);
+      else if (err instanceof Error) setError(err.message);
+      else setError('Có lỗi xảy ra!');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-[70vh] flex items-center justify-center">
-      <div className="w-full max-w-md bg-white p-10 rounded-3xl shadow-xl border border-slate-100">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-extrabold text-slate-900">Tạo tài khoản 🚀</h1>
-          <p className="text-slate-500 mt-2">Bắt đầu hành trình chinh phục điểm số.</p>
+    <div className="relative flex items-center justify-center min-h-[80vh] px-6">
+
+      {/* BACKGROUND GLOW */}
+      <div className="absolute w-[500px] h-[500px] bg-indigo-500/20 blur-[120px] rounded-full"></div>
+
+      {/* CARD */}
+      <div className="fade-up w-full max-w-md bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 space-y-6 shadow-2xl">
+
+        {/* HEADER */}
+        <div className="text-center space-y-2">
+          <h1 className="text-3xl font-bold">📝 Đăng ký</h1>
+          <p className="text-slate-400">Tạo tài khoản để bắt đầu học</p>
         </div>
 
-        {error && <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm font-medium rounded-r-lg">{error}</div>}
-        {success && <div className="mb-6 p-4 bg-green-50 border-l-4 border-green-500 text-green-700 text-sm font-medium rounded-r-lg">{success}</div>}
+        {/* ALERT */}
+        {error && (
+          <div className="p-3 bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-xl">
+            {error}
+          </div>
+        )}
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label className="block text-sm font-bold text-slate-700 mb-2">Họ và tên</label>
-            <input 
-              type="text" required
-              className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-              placeholder="Nguyễn Văn A"
+        {success && (
+          <div className="p-3 bg-green-500/10 border border-green-500/30 text-green-400 text-sm rounded-xl">
+            {success}
+          </div>
+        )}
+
+        {/* FORM */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+
+          {/* FULL NAME */}
+          <div className="relative">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></span>
+            <input
+              type="text"
+              required
+              placeholder="Họ và tên"
               value={formData.fullName}
-              onChange={(e) => setFormData({...formData, fullName: e.target.value})}
+              onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+              className="w-full pl-10 p-3 rounded-xl bg-slate-800 border border-slate-600 text-white placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/40 transition"
             />
           </div>
-          <div>
-            <label className="block text-sm font-bold text-slate-700 mb-2">Email</label>
-            <input 
-              type="email" required
-              className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-              placeholder="example@.com"
+
+          {/* EMAIL */}
+          <div className="relative">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></span>
+            <input
+              type="email"
+              required
+              placeholder="Email"
               value={formData.email}
-              onChange={(e) => setFormData({...formData, email: e.target.value})}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              className="w-full pl-10 p-3 rounded-xl bg-slate-800 border border-slate-600 text-white placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/40 transition"
             />
           </div>
-          <div>
-            <label className="block text-sm font-bold text-slate-700 mb-2">Mật khẩu</label>
-            <input 
-              type="password" required minLength={6}
-              className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-              placeholder="••••••••"
+
+          {/* PASSWORD */}
+          <div className="relative">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></span>
+            <input
+              type="password"
+              required
+              minLength={6}
+              placeholder="Mật khẩu"
               value={formData.password}
-              onChange={(e) => setFormData({...formData, password: e.target.value})}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              className="w-full pl-10 p-3 rounded-xl bg-slate-800 border border-slate-600 text-white placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/40 transition"
             />
           </div>
-          <button 
-            type="submit" disabled={loading}
-            className="w-full py-3.5 mt-2 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-all disabled:opacity-70 disabled:cursor-not-allowed shadow-lg"
+
+          {/* BUTTON */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl font-bold hover:scale-105 transition shadow-lg disabled:opacity-60"
           >
-            {loading ? 'Đang xử lý...' : 'Đăng Ký Miễn Phí'}
+            {loading ? 'Đang xử lý...' : 'Tạo tài khoản'}
           </button>
+
         </form>
 
-        <p className="text-center text-slate-600 mt-8 text-sm">
-          Đã có tài khoản? <Link href="/login" className="text-blue-600 font-bold hover:underline">Đăng nhập</Link>
+        {/* FOOTER */}
+        <p className="text-center text-slate-400 text-sm">
+          Đã có tài khoản?{" "}
+          <Link href="/login" className="text-blue-400 hover:underline">
+            Đăng nhập
+          </Link>
         </p>
+
       </div>
     </div>
   );
